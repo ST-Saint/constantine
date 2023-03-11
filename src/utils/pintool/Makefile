@@ -1,4 +1,4 @@
-PIN_ROOT := $(HOME)/pin314
+PIN_ROOT := /constantine/src/pin314
 
 # Pin's default config
 CONFIG_ROOT := $(PIN_ROOT)/source/tools/Config

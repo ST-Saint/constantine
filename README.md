@@ -2,7 +2,7 @@
 This is the home of `Constantine`: a compiler-based system to automatically harden programs against microarchitectural side channels.
 
 `Constantine` pursues a radical design point where secret dependent control and data flows are completely linearized: all the possible secret-dependent code/data memory accesses are always executed regardless of the particular secret value encountered.
-Thanks to carefully designed optimizations such as *just-in-time loop linearization* and *aggressive function cloning*, `Constantine` provides a scalable solution, while supporting all the common programming constructs in real-world software. 
+Thanks to carefully designed optimizations such as *just-in-time loop linearization* and *aggressive function cloning*, `Constantine` provides a scalable solution, while supporting all the common programming constructs in real-world software.
 
 This is the high-level architecture of `Constantine`:
 
@@ -12,7 +12,7 @@ This is the high-level architecture of `Constantine`:
 
 `Constantine` outperforms prior comprehensive solutions in terms of both performance and compatibility, while also providing stronger security guarantees. For example, we show `Constantine` yields overheads as low as 16% for cache-line attacks on standard benchmarks. Moreover, `Constantine` can protect ECDSA signatures in the [wolfSSL](https://www.wolfssl.com/) embedded library to complete a constant-time modular multiplication in 8 ms.
 
-The design behind `Constantine` is described in the paper *Constantine: Automatic Side-Channel Resistance Using Efficient Control and Data Flow Linearization* (preprint available [here](http://www.diag.uniroma1.it/~delia/papers/ccs21.pdf) or on [arXiv](https://arxiv.org/abs/2104.10749)) which appeared in the [ACM CCS 2021](https://www.sigsac.org/ccs/CCS2021/) conference. 
+The design behind `Constantine` is described in the paper *Constantine: Automatic Side-Channel Resistance Using Efficient Control and Data Flow Linearization* (preprint available [here](http://www.diag.uniroma1.it/~delia/papers/ccs21.pdf) or on [arXiv](https://arxiv.org/abs/2104.10749)) which appeared in the [ACM CCS 2021](https://www.sigsac.org/ccs/CCS2021/) conference.
 
 ## How does Constantine work?
 
@@ -63,7 +63,7 @@ This allows us to protect any memory access that may depend on secret values, as
 
 ### How can all of this scale?!
 
-We spent an *insane* amount of time optimizing this radical design: 
+We spent an *insane* amount of time optimizing this radical design:
 
 * We leverage dynamic taint analysis to restrict our protection to the only branches/loops/memory accesses in the code that are secret dependent.
 * We leverage precise pointer analysis to identify the exact fields of each object that may be touched in each memory access.
@@ -80,9 +80,16 @@ We spent an *insane* amount of time optimizing this radical design:
 Constantine is based on LLVM 9. Compile and install all the LLVM passes:
 
 ```bash
+# ubuntu:18.04 docker
+
+./install_dependencies.sh
+./install_binutils.sh
+./install_llvm.sh
+./install_SVF.sh
+./install_pintool.sh
+./isntall_gem5.sh
 ./install.sh
 . ./setup.sh
-./llvm_compile_dfsan_cpp.sh
 (cd passes && make install)
 (cd lib && make install)
 (cd utils/pintool && make check-profiler)
@@ -107,7 +114,7 @@ It will automatically:
 4. automatically protect all the branches, loops and memory accesses that the profiling phase identified as secret dependent.
 5. produce a hardened binary.
 
-**NOTICE1**: Constantine protects only the branches, memory accesses and loops that observes being secret sensitive during the random-input profiling phase. A simple random testing is usually enough for cryptographic algorithms, but beware that if a branch/memory-access is not explored it will not be protected, even if potentially secret sensitive. Provide an actual test suite to constantine in case random testing is not effective in exploring program states. 
+**NOTICE1**: Constantine protects only the branches, memory accesses and loops that observes being secret sensitive during the random-input profiling phase. A simple random testing is usually enough for cryptographic algorithms, but beware that if a branch/memory-access is not explored it will not be protected, even if potentially secret sensitive. Provide an actual test suite to constantine in case random testing is not effective in exploring program states.
 
 **NOTICE2**: All inputs are considered secret sensitive by default. Constantine observes input flowing trough explicit `read`, `pread` and `fread`. Add hooks in `./src/lib/dft/hook.c` in case this is not enough.
 
